@@ -1,0 +1,14 @@
+# ===== 向量嵌入 =====
+EMBEDDING_PROVIDER=aliyun        # aliyun/doubao/vllm/xinference/ollama
+EMBEDDING_MODEL=text-embedding-v2
+EMBEDDING_API_BASE=              # 可选，覆盖默认 base_url
+ALI_API_KEY=sk-xxx               # 对应 Provider 的 Key
+
+# ===== 知识库 =====
+CHROMA_DIR=./chroma_db
+CHUNK_STRATEGY=fast              # fast/recursive
+CHUNK_MAX_CHARS=1200
+CHUNK_OVERLAP=200
+
+# ===== 服务 =====
+PERSONALDB_PORT=9100

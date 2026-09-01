@@ -1,19 +1,27 @@
-"""A2A 大纲客户端封装（TODO）
+"""大纲客户端 —— 调用 simpleOutline 服务。
 
-参考复现计划第 8.3 节：
-  1. setup() 获取 AgentCard
-  2. generate(prompt, language) → send_message_streaming
-  3. 解析 status-update / artifact-update 分块，拼接 Markdown
+当前用 HTTP 直连 simpleOutline /generate（流式），
+后续可替换为 A2A 客户端（参考复现计划 8.3）。
 """
+import os
+
+import httpx
+
+OUTLINE_API = os.getenv("OUTLINE_API", "http://127.0.0.1:10001")
 
 
 class A2AOutlineClientWrapper:
-    """调用 simpleOutline Agent 生成大纲，流式返回 Markdown。"""
-
-    def __init__(self, base_url: str):
-        self.base_url = base_url
-        # TODO: 初始化 a2a.client.A2AClient
+    def __init__(self, base_url: str = OUTLINE_API):
+        self.base_url = base_url.rstrip("/")
 
     async def generate(self, content: str, language: str, model: str):
-        """流式返回 Markdown 大纲。"""
-        raise NotImplementedError("TODO: 实现大纲 A2A 调用")
+        """流式返回 Markdown 大纲（异步生成器，逐段 yield）。"""
+        async with httpx.AsyncClient(timeout=None) as client:
+            async with client.stream(
+                "POST",
+                f"{self.base_url}/generate",
+                json={"content": content, "language": language, "model": model},
+            ) as resp:
+                resp.raise_for_status()
+                async for chunk in resp.aiter_text():
+                    yield chunk
