@@ -1,0 +1,28 @@
+# ===== 后端统一依赖（骨架版，按复现计划锁定版本） =====
+fastapi
+uvicorn[standard]
+httpx
+python-dotenv
+python-multipart
+pydantic
+
+# ===== Agent 框架（版本敏感，见复现计划第 4 节） =====
+google-genai
+google-adk==1.5.0
+a2a-sdk==0.2.10
+litellm
+openai
+fastmcp==2.2.5
+asyncclick
+click
+
+# ===== 知识库 =====
+chromadb
+markitdown[all]>=0.1.2
+
+# ===== 搜索/解析 =====
+BeautifulSoup4
+lxml
+
+# ===== 测试 =====
+pytest
