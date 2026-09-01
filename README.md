@@ -1,16 +1,16 @@
 # 后端（杨君圣负责）
 
-四个服务 + 一个模拟 API，骨架已就绪，按《复现实施计划》阶段二~五逐服务实现。
+四个服务 + 一个模拟 API，已按《复现实施计划》阶段二~五实现完成（全链路可跑）。A2A 协议升级见 [A2A-集成指南.md](./A2A-集成指南.md)。
 
 ## 服务清单
 
 | 服务 | 目录 | 端口 | 框架 | 状态 |
 | ---- | ---- | ---- | ---- | ---- |
-| 知识库 personaldb | `personaldb/` | 9100 | FastAPI + ChromaDB | 骨架 |
-| 大纲 simpleOutline | `simpleOutline/` | 10001 | ADK + A2A（LlmAgent） | 骨架 |
-| 内容 slide_agent | `slide_agent/` | 10011 | ADK + A2A（SequentialAgent/LoopAgent） | 骨架 |
-| 主 API main_api | `main_api/` | 6800 | FastAPI + SSE | 骨架 |
-| 模拟 mock_api | `mock_api/` | 自定义 | FastAPI | 骨架 |
+| 知识库 personaldb | `personaldb/` | 9100 | FastAPI + ChromaDB | 已实现 |
+| 大纲 simpleOutline | `simpleOutline/` | 10001 | ADK + A2A（LlmAgent） | 已实现 |
+| 内容 slide_agent | `slide_agent/` | 10011 | ADK + A2A（SequentialAgent/LoopAgent） | 已实现 |
+| 主 API main_api | `main_api/` | 6800 | FastAPI + SSE | 已实现 |
+| 模拟 mock_api | `mock_api/` | 自定义 | FastAPI | 已实现 |
 
 ## 实现顺序（建议）
 

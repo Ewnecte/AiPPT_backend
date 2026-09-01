@@ -38,7 +38,9 @@ async def generate(payload: dict):
 
     provider = os.getenv("PPT_WRITER_PROVIDER", "ali")
     model = payload.get("model", os.getenv("PPT_WRITER_MODEL", "qwen-turbo-latest"))
-    agent = WritingSystemAgent(provider, model)
+    use_kb = bool(payload.get("generateFromUploadedFile", False))
+    user_id = str(payload.get("userId", "1"))
+    agent = WritingSystemAgent(provider, model, use_kb=use_kb, user_id=user_id)
 
     queue: asyncio.Queue = asyncio.Queue()
 

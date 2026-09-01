@@ -1,0 +1,1359 @@
+{
+  "title": "科技蓝紫模板",
+  "width": 1000,
+  "height": 562.5,
+  "theme": {
+    "themeColors": [
+      "#667eea",
+      "#764ba2",
+      "#3b82f6",
+      "#8b5cf6",
+      "#a78bfa",
+      "#c4b5fd"
+    ],
+    "fontColor": "#333",
+    "fontName": "",
+    "backgroundColor": "#fff",
+    "shadow": {
+      "h": 3,
+      "v": 3,
+      "blur": 2,
+      "color": "#808080"
+    },
+    "outline": {
+      "width": 2,
+      "color": "#525252",
+      "style": "solid"
+    }
+  },
+  "slides": [
+    {
+      "id": "cover-1",
+      "type": "cover",
+      "background": {
+        "type": "solid",
+        "color": "#667eea"
+      },
+      "elements": [
+        {
+          "type": "shape",
+          "id": "bg",
+          "left": 0,
+          "top": 0,
+          "width": 1000,
+          "height": 562.5,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "t",
+          "left": 100,
+          "top": 190,
+          "width": 800,
+          "height": 130,
+          "content": "<p style=\"text-align:center;\"><strong><span style=\"font-size:54px;\">模板封面标题</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#ffffff",
+          "vertical": false,
+          "textType": "title"
+        },
+        {
+          "type": "text",
+          "id": "s",
+          "left": 100,
+          "top": 330,
+          "width": 800,
+          "height": 60,
+          "content": "<p style=\"text-align:center;\"><span style=\"font-size:20px;\">副标题</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#ffffff",
+          "vertical": false,
+          "textType": "subtitle"
+        }
+      ]
+    },
+    {
+      "id": "contents-1",
+      "type": "contents",
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      },
+      "elements": [
+        {
+          "type": "shape",
+          "id": "dot0",
+          "left": 80,
+          "top": 104,
+          "width": 14,
+          "height": 14,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it0",
+          "left": 110,
+          "top": 90,
+          "width": 760,
+          "height": 40,
+          "content": "<p><strong><span style=\"font-size:20px;\">目录项 1</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "dot1",
+          "left": 80,
+          "top": 178,
+          "width": 14,
+          "height": 14,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it1",
+          "left": 110,
+          "top": 164,
+          "width": 760,
+          "height": 40,
+          "content": "<p><strong><span style=\"font-size:20px;\">目录项 2</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "dot2",
+          "left": 80,
+          "top": 252,
+          "width": 14,
+          "height": 14,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it2",
+          "left": 110,
+          "top": 238,
+          "width": 760,
+          "height": 40,
+          "content": "<p><strong><span style=\"font-size:20px;\">目录项 3</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "dot3",
+          "left": 80,
+          "top": 326,
+          "width": 14,
+          "height": 14,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it3",
+          "left": 110,
+          "top": 312,
+          "width": 760,
+          "height": 40,
+          "content": "<p><strong><span style=\"font-size:20px;\">目录项 4</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "dot4",
+          "left": 80,
+          "top": 400,
+          "width": 14,
+          "height": 14,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it4",
+          "left": 110,
+          "top": 386,
+          "width": 760,
+          "height": 40,
+          "content": "<p><strong><span style=\"font-size:20px;\">目录项 5</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        }
+      ]
+    },
+    {
+      "id": "transition-1",
+      "type": "transition",
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      },
+      "elements": [
+        {
+          "type": "shape",
+          "id": "bar",
+          "left": 60,
+          "top": 250,
+          "width": 60,
+          "height": 6,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "t",
+          "left": 60,
+          "top": 270,
+          "width": 880,
+          "height": 90,
+          "content": "<p><strong><span style=\"font-size:40px;\">章节标题</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "title"
+        }
+      ]
+    },
+    {
+      "id": "content-2",
+      "type": "content",
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "t",
+          "left": 50,
+          "top": 30,
+          "width": 900,
+          "height": 60,
+          "content": "<p><strong><span style=\"font-size:32px;\">页面标题</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "title"
+        },
+        {
+          "type": "shape",
+          "id": "bar",
+          "left": 50,
+          "top": 90,
+          "width": 60,
+          "height": 6,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "shape",
+          "id": "card0",
+          "left": 50,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it0",
+          "left": 66,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 1</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic0",
+          "left": 66,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 1 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card1",
+          "left": 510,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it1",
+          "left": 526,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 2</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic1",
+          "left": 526,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 2 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        }
+      ]
+    },
+    {
+      "id": "content-3",
+      "type": "content",
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "t",
+          "left": 50,
+          "top": 30,
+          "width": 900,
+          "height": 60,
+          "content": "<p><strong><span style=\"font-size:32px;\">页面标题</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "title"
+        },
+        {
+          "type": "shape",
+          "id": "bar",
+          "left": 50,
+          "top": 90,
+          "width": 60,
+          "height": 6,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "shape",
+          "id": "card0",
+          "left": 50,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it0",
+          "left": 66,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 1</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic0",
+          "left": 66,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 1 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card1",
+          "left": 510,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it1",
+          "left": 526,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 2</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic1",
+          "left": 526,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 2 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card2",
+          "left": 50,
+          "top": 240,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it2",
+          "left": 66,
+          "top": 252,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 3</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic2",
+          "left": 66,
+          "top": 284,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 3 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        }
+      ]
+    },
+    {
+      "id": "content-4",
+      "type": "content",
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "t",
+          "left": 50,
+          "top": 30,
+          "width": 900,
+          "height": 60,
+          "content": "<p><strong><span style=\"font-size:32px;\">页面标题</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "title"
+        },
+        {
+          "type": "shape",
+          "id": "bar",
+          "left": 50,
+          "top": 90,
+          "width": 60,
+          "height": 6,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "shape",
+          "id": "card0",
+          "left": 50,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it0",
+          "left": 66,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 1</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic0",
+          "left": 66,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 1 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card1",
+          "left": 510,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it1",
+          "left": 526,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 2</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic1",
+          "left": 526,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 2 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card2",
+          "left": 50,
+          "top": 240,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it2",
+          "left": 66,
+          "top": 252,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 3</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic2",
+          "left": 66,
+          "top": 284,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 3 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card3",
+          "left": 510,
+          "top": 240,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it3",
+          "left": 526,
+          "top": 252,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 4</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic3",
+          "left": 526,
+          "top": 284,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 4 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        }
+      ]
+    },
+    {
+      "id": "content-6",
+      "type": "content",
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "t",
+          "left": 50,
+          "top": 30,
+          "width": 900,
+          "height": 60,
+          "content": "<p><strong><span style=\"font-size:32px;\">页面标题</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "title"
+        },
+        {
+          "type": "shape",
+          "id": "bar",
+          "left": 50,
+          "top": 90,
+          "width": 60,
+          "height": 6,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "shape",
+          "id": "card0",
+          "left": 50,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it0",
+          "left": 66,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 1</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic0",
+          "left": 66,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 1 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card1",
+          "left": 510,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it1",
+          "left": 526,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 2</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic1",
+          "left": 526,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 2 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card2",
+          "left": 50,
+          "top": 240,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it2",
+          "left": 66,
+          "top": 252,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 3</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic2",
+          "left": 66,
+          "top": 284,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 3 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card3",
+          "left": 510,
+          "top": 240,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it3",
+          "left": 526,
+          "top": 252,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 4</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic3",
+          "left": 526,
+          "top": 284,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 4 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card4",
+          "left": 50,
+          "top": 360,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it4",
+          "left": 66,
+          "top": 372,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 5</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic4",
+          "left": 66,
+          "top": 404,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 5 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card5",
+          "left": 510,
+          "top": 360,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it5",
+          "left": 526,
+          "top": 372,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 6</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic5",
+          "left": 526,
+          "top": 404,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 6 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        }
+      ]
+    },
+    {
+      "id": "content-chart",
+      "type": "content",
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "t",
+          "left": 50,
+          "top": 30,
+          "width": 900,
+          "height": 60,
+          "content": "<p><strong><span style=\"font-size:32px;\">页面标题</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "title"
+        },
+        {
+          "type": "shape",
+          "id": "bar",
+          "left": 50,
+          "top": 90,
+          "width": 60,
+          "height": 6,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "shape",
+          "id": "card0",
+          "left": 50,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it0",
+          "left": 66,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 1</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic0",
+          "left": 66,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 1 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card1",
+          "left": 510,
+          "top": 120,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it1",
+          "left": 526,
+          "top": 132,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 2</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic1",
+          "left": 526,
+          "top": 164,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 2 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "shape",
+          "id": "card2",
+          "left": 50,
+          "top": 240,
+          "width": 420,
+          "height": 90,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#f5f6fa",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "it2",
+          "left": 66,
+          "top": 252,
+          "width": 388,
+          "height": 28,
+          "content": "<p><strong><span style=\"font-size:18px;\">要点 3</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "itemTitle"
+        },
+        {
+          "type": "text",
+          "id": "ic2",
+          "left": 66,
+          "top": 284,
+          "width": 388,
+          "height": 40,
+          "content": "<p><span style=\"font-size:14px;\">要点 3 的详细说明</span></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#333",
+          "vertical": false,
+          "textType": "item"
+        },
+        {
+          "type": "chart",
+          "id": "chart",
+          "left": 50,
+          "top": 300,
+          "width": 400,
+          "height": 220,
+          "chartType": "bar",
+          "chartMark": "chartItem"
+        }
+      ]
+    },
+    {
+      "id": "end-1",
+      "type": "end",
+      "background": {
+        "type": "solid",
+        "color": "#667eea"
+      },
+      "elements": [
+        {
+          "type": "shape",
+          "id": "bg",
+          "left": 0,
+          "top": 0,
+          "width": 1000,
+          "height": 562.5,
+          "viewBox": [
+            200,
+            200
+          ],
+          "path": "M 0 0 L 200 0 L 200 200 L 0 200 Z",
+          "fill": "#667eea",
+          "fixedRatio": false,
+          "rotate": 0,
+          "lock": true
+        },
+        {
+          "type": "text",
+          "id": "t",
+          "left": 100,
+          "top": 230,
+          "width": 800,
+          "height": 100,
+          "content": "<p style=\"text-align:center;\"><strong><span style=\"font-size:48px;\">谢谢观看</span></strong></p>",
+          "rotate": 0,
+          "defaultFontName": "",
+          "defaultColor": "#ffffff",
+          "vertical": false,
+          "textType": "title"
+        }
+      ]
+    }
+  ],
+  "intend": 4
+}

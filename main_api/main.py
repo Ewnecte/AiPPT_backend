@@ -3,11 +3,12 @@
 统一入口：参数校验、转发大纲/内容 Agent、SSE 流式封装、模板/文件/代理。
 """
 import os
+from pathlib import Path
 
 import httpx
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 
 from content_client import A2AContentClientWrapper
 from outline_client import A2AOutlineClientWrapper
@@ -26,6 +27,14 @@ app.add_middleware(
 outline_client = A2AOutlineClientWrapper()
 content_client = A2AContentClientWrapper()
 
+TEMPLATE_DIR = "./template"
+TEMPLATE_NAMES = {
+    "template_1": "科技蓝紫",
+    "template_2": "商务蓝",
+    "template_3": "活力橙",
+    "template_4": "清新绿",
+}
+
 
 @app.get("/healthz")
 async def healthz():
@@ -34,8 +43,25 @@ async def healthz():
 
 @app.get("/templates")
 async def templates():
-    # TODO: 从 main_api/template/ 目录读取模板列表（name/id/cover）
-    return {"templates": []}
+    items = []
+    for f in sorted(Path(TEMPLATE_DIR).glob("template_*.json")):
+        tid = f.stem
+        items.append(
+            {
+                "name": TEMPLATE_NAMES.get(tid, tid),
+                "id": tid,
+                "cover": f"/api/data/{tid}.svg",
+            }
+        )
+    return {"data": items}
+
+
+@app.get("/data/{filename}")
+async def data(filename: str):
+    file_path = os.path.join(TEMPLATE_DIR, os.path.basename(filename))
+    if not os.path.exists(file_path):
+        return JSONResponse({"error": "not found"}, status_code=404)
+    return FileResponse(file_path)
 
 
 @app.post("/tools/aippt_outline")
@@ -86,9 +112,14 @@ async def aippt(payload: dict):
     if not markdown:
         return JSONResponse({"error": "content 不能为空"}, status_code=400)
     model = payload.get("model", os.getenv("PPT_WRITER_MODEL", "qwen-turbo-latest"))
+    metadata = {
+        "generateFromUploadedFile": payload.get("generateFromUploadedFile", False),
+        "generateFromWebSearch": payload.get("generateFromWebSearch", False),
+        "userId": payload.get("userId", "1"),
+    }
 
     async def gen():
-        async for line in content_client.generate(markdown, model):
+        async for line in content_client.generate(markdown, model, metadata):
             if line.startswith("data:"):
                 yield f"{line}\n\n"
 

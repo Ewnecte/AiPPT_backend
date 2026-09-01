@@ -14,13 +14,16 @@ class A2AContentClientWrapper:
     def __init__(self, base_url: str = CONTENT_API):
         self.base_url = base_url.rstrip("/")
 
-    async def generate(self, markdown: str, model: str):
+    async def generate(self, markdown: str, model: str, metadata: dict | None = None):
         """SSE 流式返回逐页 JSON（异步生成器，逐行 yield data 行）。"""
+        payload: dict = {"content": markdown, "model": model}
+        if metadata:
+            payload.update(metadata)
         async with httpx.AsyncClient(timeout=None) as client:
             async with client.stream(
                 "POST",
                 f"{self.base_url}/generate",
-                json={"content": markdown, "model": model},
+                json=payload,
             ) as resp:
                 resp.raise_for_status()
                 async for line in resp.aiter_lines():
