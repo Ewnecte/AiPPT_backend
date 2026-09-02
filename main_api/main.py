@@ -5,6 +5,11 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+# 统一加载 backend/.env（对齐复现计划 8.3），须在 import 各 client 之前执行
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
 import httpx
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -128,8 +133,35 @@ async def aippt(payload: dict):
 
 @app.post("/tools/aippt_by_id")
 async def aippt_by_id(payload: dict):
-    # TODO: 按文件 id 从 personaldb 取 Markdown → 再走逐页生成
-    return JSONResponse({"error": "TODO: 实现按文件生成"}, status_code=501)
+    """按已上传文件的 id 生成 PPT：取回源文档 Markdown → 逐页生成（走知识库检索）。"""
+    file_id = str(payload.get("fileId", ""))
+    user_id = str(payload.get("userId", "1"))
+    if not file_id:
+        return JSONResponse({"error": "fileId 不能为空"}, status_code=400)
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.get(f"{PERSONAL_DB}/file/{user_id}/{file_id}")
+        if resp.status_code == 404:
+            return JSONResponse({"error": "文件不存在或未入库"}, status_code=404)
+        resp.raise_for_status()
+        markdown = resp.json().get("markdown_content", "")
+
+    if not markdown:
+        return JSONResponse({"error": "文件内容为空"}, status_code=400)
+
+    model = payload.get("model", os.getenv("PPT_WRITER_MODEL", "qwen-turbo-latest"))
+    metadata = {
+        "generateFromUploadedFile": True,  # 触发 slide_agent 知识库检索增强
+        "generateFromWebSearch": False,
+        "userId": user_id,
+    }
+
+    async def gen():
+        async for line in content_client.generate(markdown, model, metadata):
+            if line.startswith("data:"):
+                yield f"{line}\n\n"
+
+    return StreamingResponse(gen(), media_type="text/event-stream")
 
 
 @app.get("/files/{user_id}")

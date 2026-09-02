@@ -10,11 +10,18 @@
 依赖顺序：本服务是 slide_agent / main_api 的底层依赖，应最先启动。
 """
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# 统一加载 backend/.env（对齐复现计划 8.3），须在读取任何 env 之前执行
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from core.doc_store import DocStore
 from core.document_processor import DocumentProcessor
 from core.file_cache_manager import FileCacheManager
 from embedding_utils import ChromaStore, EmbeddingModel
@@ -41,6 +48,7 @@ embedder = EmbeddingModel(
 )
 store = ChromaStore(os.getenv("CHROMA_DIR", "./chroma_db"))
 cache = FileCacheManager()
+doc_store = DocStore(os.getenv("DOCS_DIR", "./docs"))
 processor = DocumentProcessor(
     os.getenv("CHUNK_STRATEGY", "fast"),
     int(os.getenv("CHUNK_MAX_CHARS", "1200")),
@@ -92,6 +100,15 @@ async def upload(
         file_name = file.filename or "upload"
         cached = cache.get(content)
         if cached:
+            # 缓存命中也要落一份按 (user_id, file_id) 的 Markdown，供按文件生成
+            doc_store.save(
+                userId,
+                fileId,
+                cached.get("markdown_content", ""),
+                cached.get("file_name", file_name),
+                cached.get("file_type", ""),
+                cached.get("url", ""),
+            )
             return cached
         parsed = processor.process_bytes(content, file_name)
     else:
@@ -109,8 +126,27 @@ async def files(user_id: str):
     return {"files": store.list_files(user_id)}
 
 
+@app.get("/file/{user_id}/{file_id}")
+async def get_file_markdown(user_id: str, file_id: str):
+    """按 (user_id, file_id) 返回已入库文件的完整 Markdown（供按文件生成 PPT）。"""
+    doc = doc_store.get(user_id, file_id)
+    if doc is None:
+        return JSONResponse({"error": "file not found"}, status_code=404)
+    return doc
+
+
 def _store(user_id: str, file_id: str, parsed) -> dict:
-    """分块 → 向量化 → 写入 ChromaDB。"""
+    """分块 → 向量化 → 写入 ChromaDB，并落盘完整 Markdown。"""
+    # 无论是否产生分块，都按 (user_id, file_id) 持久化源文档 Markdown
+    doc_store.save(
+        user_id,
+        file_id,
+        parsed.markdown,
+        parsed.file_name,
+        parsed.file_type,
+        parsed.url,
+    )
+
     chunks = parsed.chunks
     if not chunks:
         return {

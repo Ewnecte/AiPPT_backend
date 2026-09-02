@@ -8,6 +8,12 @@
 核心生成逻辑已抽到 agent.stream_outline()，可复用。
 """
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# 统一加载 backend/.env（对齐复现计划 8.3），须在读取任何 env 之前执行
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

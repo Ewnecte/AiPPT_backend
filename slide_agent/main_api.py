@@ -7,12 +7,19 @@
 import asyncio
 import json
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+# 统一加载 backend/.env（对齐复现计划 8.3），须在读取任何 env 之前执行
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from slide_agent.agent import WritingSystemAgent
+from slide_agent.config import PPT_WRITER_AGENT_CONFIG
 
 PORT = int(os.getenv("CONTENT_API_PORT", "10011"))
 
@@ -36,8 +43,8 @@ async def generate(payload: dict):
     if not markdown:
         return JSONResponse({"error": "content 不能为空"}, status_code=400)
 
-    provider = os.getenv("PPT_WRITER_PROVIDER", "ali")
-    model = payload.get("model", os.getenv("PPT_WRITER_MODEL", "qwen-turbo-latest"))
+    provider = PPT_WRITER_AGENT_CONFIG["provider"]
+    model = payload.get("model", PPT_WRITER_AGENT_CONFIG["model"])
     use_kb = bool(payload.get("generateFromUploadedFile", False))
     user_id = str(payload.get("userId", "1"))
     agent = WritingSystemAgent(provider, model, use_kb=use_kb, user_id=user_id)

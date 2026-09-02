@@ -1,0 +1,60 @@
+# ===== AiPPT 统一环境配置模板（复制为 backend/.env 并填写真实 Key） =====
+# 各服务启动时会自动加载 backend/.env（见各 main*.py 顶部的 load_dotenv）。
+# 说明见《复现实施计划》第 12 节。
+
+# ===== 大纲生成模型 =====
+MODEL_PROVIDER=ali              # google/claude/openai/deepseek/ali/silicon/modelscope/doubao/glm/vllm/ollama/local
+LLM_MODEL=qwen-turbo-latest
+
+# ===== 内容生成模型（撰写/校对可不同） =====
+PPT_WRITER_PROVIDER=ali
+PPT_WRITER_MODEL=qwen-turbo-latest
+PPT_CHECKER_PROVIDER=ali
+PPT_CHECKER_MODEL=qwen-turbo-latest
+
+# ===== 向量嵌入 =====
+EMBEDDING_PROVIDER=aliyun        # aliyun/doubao/vllm/xinference/ollama
+EMBEDDING_MODEL=text-embedding-v2
+EMBEDDING_API_BASE=              # 可选，覆盖默认 base_url
+
+# ===== 各供应商 API Key（按需填写） =====
+GOOGLE_API_KEY=xxx
+OPENAI_API_KEY=xxx
+CLAUDE_API_KEY=xxx
+DEEPSEEK_API_KEY=xxx
+ALI_API_KEY=sk-xxx
+DOUBAO_API_KEY=xxx
+SILICON_API_KEY=xxx
+MODELSCOPE_API_KEY=xxx
+GLM_API_KEY=xxx
+
+# ===== 本地模型（可选） =====
+OLLAMA_API_URL=http://127.0.0.1:11434/v1
+VLLM_API_URL=http://127.0.0.1:8000/v1
+XINFERENCE_API_URL=http://127.0.0.1:9997/v1
+
+# ===== 配图 =====
+PEXELS_API_KEY=xxx               # 可选，缺省用内置图片池
+
+# ===== 内部服务地址 =====
+OUTLINE_API=http://127.0.0.1:10001
+CONTENT_API=http://127.0.0.1:10011
+PERSONAL_DB=http://127.0.0.1:9100    # 注意拼写，不是 PERSONENAL_DB
+
+# ===== 开关 =====
+USE_CHART=True                   # 图表生成
+USE_MINERU=false                 # MinerU PDF 解析（需 GPU）
+OUTLINE_STREAMING=true
+CONTENT_STREAMING=false          # 内容 LLM 非流式，避免 JSON 粘连
+
+# ===== 知识库 =====
+CHROMA_DIR=./chroma_db
+CHUNK_STRATEGY=fast              # fast/recursive
+CHUNK_MAX_CHARS=1200
+CHUNK_OVERLAP=200
+
+# ===== 服务端口（可选覆盖） =====
+MAIN_API_PORT=6800
+OUTLINE_API_PORT=10001
+CONTENT_API_PORT=10011
+PERSONALDB_PORT=9100
