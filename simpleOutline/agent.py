@@ -40,19 +40,35 @@ def _build_prompt(content: str, language: str) -> str:
     return f"{instruction}\n\n语言：{language}\n主题：{content}{extra}"
 
 
-async def stream_outline(content: str, language: str, provider: str, model: str):
-    """异步生成器，逐段 yield 大纲文本（流式）。"""
+async def stream_outline(content: str, language: str, provider: str, model: str, max_retries: int = 3):
+    """异步生成器，逐段 yield 大纲文本（流式）。
+
+    产出任何内容前失败会自动重试（如网络/鉴权抖动）；已产出部分内容后再失败则
+    不再重试（避免重复输出），向上抛出友好错误。
+    """
     prompt = _build_prompt(content, language)
-    resp = await litellm.acompletion(
-        model=model_name(provider, model),
-        messages=[{"role": "user", "content": prompt}],
-        stream=True,
-        **litellm_kwargs(provider),
-    )
-    async for chunk in resp:
-        delta = chunk.choices[0].delta.content or ""
-        if delta:
-            yield delta
+    last_err: Exception | None = None
+    for attempt in range(max_retries + 1):
+        yielded = False
+        try:
+            resp = await litellm.acompletion(
+                model=model_name(provider, model),
+                messages=[{"role": "user", "content": prompt}],
+                stream=True,
+                **litellm_kwargs(provider),
+            )
+            async for chunk in resp:
+                delta = chunk.choices[0].delta.content or ""
+                if delta:
+                    yielded = True
+                    yield delta
+            return  # 正常结束
+        except Exception as e:  # noqa: BLE001 —— 统一转为友好错误
+            last_err = e
+            if yielded or attempt == max_retries:
+                break
+            await asyncio.sleep(1.0 * (attempt + 1))
+    raise RuntimeError(f"大纲生成失败：{last_err}") from last_err
 
 
 async def generate_outline(content: str, language: str, provider: str, model: str) -> str:

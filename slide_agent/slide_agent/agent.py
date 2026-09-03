@@ -5,10 +5,13 @@
 可选：use_kb=True 时，每页生成前先检索知识库（personaldb）注入参考内容。
 """
 import json
+import logging
 
 from .sub_agents.ppt_writer.agent import CheckerAgent, ControllerAgent, PPTWriterSubAgent
 from .sub_agents.ppt_writer.tools import knowledge_base_search
 from .utils import parse_markdown_to_slides
+
+logger = logging.getLogger(__name__)
 
 
 class WritingSystemAgent:
@@ -57,8 +60,13 @@ class WritingSystemAgent:
                 pass
 
         for _ in range(self.controller.max_retries):
-            text = await self.writer.write(slide_type, context, self.provider, self.model)
+            try:
+                text = await self.writer.write(slide_type, context, self.provider, self.model)
+            except Exception as e:  # noqa: BLE001 —— LLM/网络失败视为本轮失败，重试下一轮
+                logger.warning("页面 %s 生成失败，重试：%s", slide_type, e)
+                continue
             data = self.checker.check(text)
             if data is not None:
                 return data
+        logger.warning("页面 %s 重试耗尽，跳过", slide_type)
         return None  # 重试耗尽，跳过该页（不中断整体流程）

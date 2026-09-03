@@ -36,8 +36,8 @@ class EmbeddingModel:
             return os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434/v1")
         return self.PROVIDER_BASE_URL.get(self.provider, self.PROVIDER_BASE_URL["aliyun"])
 
-    def embed(self, texts: list[str]) -> list[list[float]]:
-        """批量向量化，返回与输入等长的向量列表。"""
+    async def embed(self, texts: list[str]) -> list[list[float]]:
+        """批量向量化，返回与输入等长的向量列表（异步，避免阻塞事件循环）。"""
         if not texts:
             return []
         payload = {"model": self.model, "input": texts}
@@ -45,14 +45,14 @@ class EmbeddingModel:
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
 
-        resp = httpx.post(
-            f"{self.api_base.rstrip('/')}/embeddings",
-            json=payload,
-            headers=headers,
-            timeout=120,
-        )
-        resp.raise_for_status()
-        data = resp.json().get("data", [])
+        async with httpx.AsyncClient(timeout=120) as client:
+            resp = await client.post(
+                f"{self.api_base.rstrip('/')}/embeddings",
+                json=payload,
+                headers=headers,
+            )
+            resp.raise_for_status()
+            data = resp.json().get("data", [])
         # 按 index 排序，保证顺序与输入一致
         ordered = sorted(data, key=lambda x: x.get("index", 0))
         return [item["embedding"] for item in ordered]

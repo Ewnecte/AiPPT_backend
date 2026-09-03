@@ -69,7 +69,7 @@ async def search(payload: dict):
     if not user_id or not query:
         return JSONResponse({"error": "userId/query 为必填项"}, status_code=400)
 
-    vec = embedder.embed([query])[0]
+    vec = (await embedder.embed([query]))[0]
     results = store.search(user_id, vec, top_k)
     return {"results": results}
 
@@ -79,7 +79,7 @@ async def vectorize_text(payload: dict):
     texts = payload.get("texts", [])
     if not texts:
         return JSONResponse({"error": "texts 不能为空"}, status_code=400)
-    return {"embeddings": embedder.embed(texts)}
+    return {"embeddings": await embedder.embed(texts)}
 
 
 @app.post("/upload/")
@@ -114,7 +114,7 @@ async def upload(
     else:
         parsed = processor.process_url(url)
 
-    result = _store(userId, fileId, parsed)
+    result = await _store(userId, fileId, parsed)
 
     if content is not None:
         cache.set(content, result)
@@ -135,7 +135,7 @@ async def get_file_markdown(user_id: str, file_id: str):
     return doc
 
 
-def _store(user_id: str, file_id: str, parsed) -> dict:
+async def _store(user_id: str, file_id: str, parsed) -> dict:
     """分块 → 向量化 → 写入 ChromaDB，并落盘完整 Markdown。"""
     # 无论是否产生分块，都按 (user_id, file_id) 持久化源文档 Markdown
     doc_store.save(
@@ -158,7 +158,7 @@ def _store(user_id: str, file_id: str, parsed) -> dict:
         }
 
     ids = [f"{file_id}_{c.index}" for c in chunks]
-    embeddings = embedder.embed([c.text for c in chunks])
+    embeddings = await embedder.embed([c.text for c in chunks])
     metadatas = [
         {
             "file_id": file_id,
