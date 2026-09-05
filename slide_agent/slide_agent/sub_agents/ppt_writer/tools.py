@@ -18,17 +18,17 @@ async def knowledge_base_search(query: str, top_k: int = 3, user_id: str = "1") 
 
 
 async def search_image(query: str, count: int = 1) -> list[dict]:
-    """Pexels 图片搜索；无 Key 或失败时降级为内置图片池。"""
+    """Pexels 图片搜索；无 Key 或失败时降级为 picsum 占位图。"""
     api_key = os.getenv("PEXELS_API_KEY", "")
     if not api_key:
-        return _fallback_images(count)
+        return _fallback_images(count, query)
     try:
-        resp = httpx.get(
-            "https://api.pexels.com/v1/search",
-            params={"query": query, "per_page": count},
-            headers={"Authorization": api_key},
-            timeout=30,
-        )
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.get(
+                "https://api.pexels.com/v1/search",
+                params={"query": query, "per_page": count},
+                headers={"Authorization": api_key},
+            )
         resp.raise_for_status()
         photos = resp.json().get("photos", [])
         return [
@@ -41,12 +41,35 @@ async def search_image(query: str, count: int = 1) -> list[dict]:
             for p in photos
         ]
     except Exception:  # noqa: BLE001 —— 外部图片 API 失败降级
-        return _fallback_images(count)
+        return _fallback_images(count, query)
 
 
-def _fallback_images(count: int) -> list[dict]:
-    """内置图片池占位（可替换为本地图片路径，走 main_api /proxy 代理）。"""
-    return [{"url": "", "width": 0, "height": 0, "author": "内置图片池"} for _ in range(count)]
+def _fallback_images(count: int, seed: str = "ppt") -> list[dict]:
+    """无 Pexels Key 时降级为 picsum 占位图（真实图片、无需鉴权）。"""
+    return [
+        {
+            "url": f"https://picsum.photos/seed/{seed}-{i}/800/600",
+            "width": 800,
+            "height": 600,
+            "author": "picsum",
+        }
+        for i in range(count)
+    ]
+
+
+async def inject_images(data: dict) -> dict:
+    """为 kind=image 的 items 填充图片 URL（Pexels / picsum 占位）。"""
+    d = data.get("data")
+    items = d.get("items") if isinstance(d, dict) else None
+    if not isinstance(items, list):
+        return data
+    for it in items:
+        if isinstance(it, dict) and it.get("kind") == "image" and not it.get("url"):
+            query = it.get("title") or it.get("text") or "business"
+            urls = await search_image(query, count=1)
+            if urls:
+                it["url"] = urls[0]["url"]
+    return data
 
 
 async def document_search(keyword: str, top_n: int = 3) -> list[dict]:

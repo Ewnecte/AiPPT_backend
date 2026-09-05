@@ -172,6 +172,58 @@ async def files(user_id: str):
         return resp.json()
 
 
+@app.post("/files/upload")
+async def kb_upload(
+    userId: str = Form("1"),
+    fileId: str = Form(...),
+    file: UploadFile = File(None),
+    url: str = Form(None),
+):
+    """知识库文件/URL 入库（透传 personaldb POST /upload/）。file 与 url 必须二选一。"""
+    if (file is None) == (not url):
+        return JSONResponse({"error": "file 与 url 必须且只能提供其中一个"}, status_code=400)
+    data = {"userId": userId, "fileId": fileId}
+    if url:
+        data["url"] = url
+    content = await file.read() if file is not None else None
+    async with httpx.AsyncClient(timeout=120) as client:
+        resp = await client.post(
+            f"{PERSONAL_DB}/upload/",
+            files=(
+                {"file": (file.filename or "upload", content)} if content is not None else None
+            ),
+            data=data,
+        )
+    if resp.status_code >= 400:
+        try:
+            return JSONResponse(resp.json(), status_code=resp.status_code)
+        except Exception:
+            return Response(content=resp.content, status_code=resp.status_code, media_type="application/json")
+    return resp.json()
+
+
+@app.get("/file/{user_id}/{file_id}")
+async def kb_file_detail(user_id: str, file_id: str):
+    """读取已入库文件（含完整 Markdown 内容），供前端预览/内容展示。"""
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.get(f"{PERSONAL_DB}/file/{user_id}/{file_id}")
+        if resp.status_code == 404:
+            return JSONResponse({"error": "文件不存在或未入库"}, status_code=404)
+        resp.raise_for_status()
+        return resp.json()
+
+
+@app.delete("/file/{user_id}/{file_id}")
+async def kb_file_delete(user_id: str, file_id: str):
+    """删除已入库文件（Chroma 分块 + 完整原文），透传 personaldb。"""
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.delete(f"{PERSONAL_DB}/file/{user_id}/{file_id}")
+        if resp.status_code == 404:
+            return JSONResponse({"error": "文件不存在或未入库"}, status_code=404)
+        resp.raise_for_status()
+        return resp.json()
+
+
 @app.get("/proxy")
 async def proxy(url: str = ""):
     """透明代理外链图片，解决前端跨域加载。"""

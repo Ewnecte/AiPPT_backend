@@ -6,6 +6,9 @@
 """
 import json
 
+# 与 frontend/src/types/AIPPT.ts 的 ChartType 保持一致
+_VALID_CHART_TYPES = {"line", "bar", "pie", "column", "ring", "area", "radar"}
+
 
 def only_json(text: str) -> str:
     """从模型输出中截取 JSON 片段（首个 { 到末个 }）。"""
@@ -17,14 +20,34 @@ def only_json(text: str) -> str:
 
 
 def validate_slide(data: dict) -> bool:
-    """校验单页 Slide 是否满足基本 schema（type + data）。"""
+    """校验单页 Slide 是否满足基本 schema。
+
+    除 type/data 外，额外校验：
+      - data.items 若存在必须是列表
+      - kind=chart 的项需携带合法 chartType + labels + series
+    """
     if not isinstance(data, dict):
         return False
     if "type" not in data or not isinstance(data["type"], str):
         return False
+
+    d = data.get("data")
     # data 允许缺失或为空（如 end 页）
-    if "data" in data and data["data"] is not None and not isinstance(data["data"], dict):
+    if d is None:
+        return True
+    if not isinstance(d, dict):
         return False
+
+    items = d.get("items")
+    if items is not None and not isinstance(items, list):
+        return False
+
+    for it in items or []:
+        if isinstance(it, dict) and it.get("kind") == "chart":
+            if it.get("chartType") not in _VALID_CHART_TYPES:
+                return False
+            if not isinstance(it.get("labels"), list) or not isinstance(it.get("series"), list):
+                return False
     return True
 
 

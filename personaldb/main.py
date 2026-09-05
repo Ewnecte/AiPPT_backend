@@ -44,7 +44,7 @@ app.add_middleware(
 embedder = EmbeddingModel(
     os.getenv("EMBEDDING_PROVIDER", "aliyun"),
     os.getenv("EMBEDDING_MODEL", "text-embedding-v2"),
-    os.getenv("ALI_API_KEY", ""),
+    # api_key 由 EmbeddingModel 按 provider 从环境变量解析（见 embedding_utils.PROVIDER_KEY_ENV）
 )
 store = ChromaStore(os.getenv("CHROMA_DIR", "./chroma_db"))
 cache = FileCacheManager()
@@ -133,6 +133,16 @@ async def get_file_markdown(user_id: str, file_id: str):
     if doc is None:
         return JSONResponse({"error": "file not found"}, status_code=404)
     return doc
+
+
+@app.delete("/file/{user_id}/{file_id}")
+async def delete_file(user_id: str, file_id: str):
+    """删除已入库文件（分块 + 完整原文），供清理知识库使用。"""
+    deleted_chunks = store.delete(user_id, file_id)
+    doc_deleted = doc_store.delete(user_id, file_id)
+    if deleted_chunks == 0 and not doc_deleted:
+        return JSONResponse({"error": "file not found"}, status_code=404)
+    return {"ok": True, "deleted_chunks": deleted_chunks}
 
 
 async def _store(user_id: str, file_id: str, parsed) -> dict:

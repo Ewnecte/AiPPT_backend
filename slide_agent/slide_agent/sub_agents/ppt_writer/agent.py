@@ -16,8 +16,15 @@ class PPTWriterSubAgent:
     def __init__(self, tools: list | None = None):
         self.tools = tools or []  # KnowledgeBaseSearch / SearchImage 待接入
 
-    async def write(self, slide_type: str, context: str, provider: str, model: str) -> str:
-        prompt = prompt_mapper(slide_type) + f"\n主题/上下文：{context}"
+    async def write(
+        self,
+        slide_type: str,
+        context: str,
+        provider: str,
+        model: str,
+        use_chart: bool = False,
+    ) -> str:
+        prompt = prompt_mapper(slide_type, use_chart) + f"\n主题/上下文：{context}"
         resp = await litellm.acompletion(
             model=model_name(provider, model),
             messages=[{"role": "user", "content": prompt}],

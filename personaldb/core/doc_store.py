@@ -49,3 +49,11 @@ class DocStore:
             return None
         with open(path, encoding="utf-8") as f:
             return json.load(f)
+
+    def delete(self, user_id: str, file_id: str) -> bool:
+        """删除已落盘的完整 Markdown，存在则删除并返回 True。"""
+        path = self._path(user_id, file_id)
+        if os.path.exists(path):
+            os.remove(path)
+            return True
+        return False

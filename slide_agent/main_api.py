@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from slide_agent.agent import WritingSystemAgent
-from slide_agent.config import PPT_WRITER_AGENT_CONFIG
+from slide_agent.config import PPT_WRITER_AGENT_CONFIG, USE_CHART
 
 PORT = int(os.getenv("CONTENT_API_PORT", "10011"))
 
@@ -47,7 +47,9 @@ async def generate(payload: dict):
     model = payload.get("model", PPT_WRITER_AGENT_CONFIG["model"])
     use_kb = bool(payload.get("generateFromUploadedFile", False))
     user_id = str(payload.get("userId", "1"))
-    agent = WritingSystemAgent(provider, model, use_kb=use_kb, user_id=user_id)
+    agent = WritingSystemAgent(
+        provider, model, use_kb=use_kb, user_id=user_id, use_chart=USE_CHART
+    )
 
     queue: asyncio.Queue = asyncio.Queue()
 

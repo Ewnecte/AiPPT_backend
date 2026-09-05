@@ -18,11 +18,21 @@ class EmbeddingModel:
         "doubao": "https://ark.cn-beijing.volces.com/api/v3",
     }
 
+    # provider → API Key 对应的环境变量名（本地模型可无 key）
+    PROVIDER_KEY_ENV = {
+        "aliyun": "ALI_API_KEY",
+        "doubao": "DOUBAO_API_KEY",
+        "vllm": "VLLM_API_KEY",
+        "xinference": "XINFERENCE_API_KEY",
+        "ollama": "OLLAMA_API_KEY",
+    }
+
     def __init__(self, provider: str, model: str, api_key: str = ""):
         self.provider = provider
         self.model = model
-        self.api_key = api_key
+        self.api_key = api_key or self._resolve_key()
         self.api_base = self._resolve_base()
+        self._cache: dict[str, list[float]] = {}
 
     def _resolve_base(self) -> str:
         env_base = os.getenv("EMBEDDING_API_BASE", "")
@@ -36,10 +46,40 @@ class EmbeddingModel:
             return os.getenv("OLLAMA_API_URL", "http://127.0.0.1:11434/v1")
         return self.PROVIDER_BASE_URL.get(self.provider, self.PROVIDER_BASE_URL["aliyun"])
 
+    def _resolve_key(self) -> str:
+        """未显式传入 api_key 时，按 provider 从环境变量解析。"""
+        env_name = self.PROVIDER_KEY_ENV.get(self.provider, "")
+        if env_name:
+            return os.getenv(env_name, "")
+        return os.getenv("EMBEDDING_API_KEY", "")
+
     async def embed(self, texts: list[str]) -> list[list[float]]:
-        """批量向量化，返回与输入等长的向量列表（异步，避免阻塞事件循环）。"""
+        """批量向量化，返回与输入等长的向量列表（异步，避免阻塞事件循环）。
+
+        命中内存缓存直接复用，仅对未命中的文本发起批量请求。
+        """
         if not texts:
             return []
+
+        result: list[list[float] | None] = [None] * len(texts)
+        miss_idx: list[int] = []
+        for i, text in enumerate(texts):
+            if text in self._cache:
+                result[i] = self._cache[text]
+            else:
+                miss_idx.append(i)
+
+        if miss_idx:
+            miss_texts = [texts[i] for i in miss_idx]
+            embeddings = await self._request_embeddings(miss_texts)
+            for i, emb in zip(miss_idx, embeddings):
+                self._cache[texts[i]] = emb
+                result[i] = emb
+
+        return [emb for emb in result if emb is not None]
+
+    async def _request_embeddings(self, texts: list[str]) -> list[list[float]]:
+        """调用 OpenAI 兼容 /embeddings 接口，返回与输入等长的向量列表。"""
         payload = {"model": self.model, "input": texts}
         headers = {"Content-Type": "application/json"}
         if self.api_key:
@@ -121,3 +161,15 @@ class ChromaStore:
                     "url": m.get("url", ""),
                 }
         return list(files.values())
+
+    def delete(self, user_id: str, file_id: str) -> int:
+        """删除该用户下某文件的所有分块，返回删除条数。
+
+        先按 file_id 查出 id 再按 id 删（跨 chromadb 版本更稳定）。
+        """
+        col = self.get_collection(user_id)
+        existing = col.get(where={"file_id": file_id})
+        ids = existing.get("ids") or []
+        if ids:
+            col.delete(ids=ids)
+        return len(ids)

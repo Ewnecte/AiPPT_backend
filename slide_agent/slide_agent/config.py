@@ -16,3 +16,6 @@ def _build(provider_env: str, model_env: str) -> dict:
 
 PPT_WRITER_AGENT_CONFIG = _build("PPT_WRITER_PROVIDER", "PPT_WRITER_MODEL")
 PPT_CHECKER_AGENT_CONFIG = _build("PPT_CHECKER_PROVIDER", "PPT_CHECKER_MODEL")
+
+# 是否允许 content 页生成图表项（对齐 .env USE_CHART）
+USE_CHART = os.getenv("USE_CHART", "True").lower() in ("1", "true", "yes")
