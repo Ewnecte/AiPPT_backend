@@ -73,31 +73,43 @@ async def inject_images(data: dict) -> dict:
 
 
 async def document_search(keyword: str, top_n: int = 3) -> list[dict]:
-    """微信文章搜索，返回 [{title, publish_time, real_url, content}]。
+    """联网搜索，返回 [{title, publish_time, real_url, content}]。
 
-    复用搜狗微信搜索（同 simpleOutline），正文抓取失败不影响其他文章。
+    优先搜狗微信（抓公众号正文）；搜狗通道不稳定（空结果 / 正文抓不到）时
+    自动降级为 Bing 网页搜索（title + 摘要，不抓正文）。
     """
     import asyncio
 
-    from .weixin_search import get_article_content, sogou_weixin_search
+    from .weixin_search import bing_search, get_article_content, sogou_weixin_search
 
     def _run() -> list[dict]:
-        results = []
-        for a in sogou_weixin_search(keyword, top_n):
-            content = ""
-            try:
-                content = get_article_content(a["real_url"])
-            except Exception:  # noqa: BLE001 —— 正文抓取失败不影响其他文章
-                pass
-            results.append(
-                {
-                    "title": a["title"],
-                    "publish_time": a.get("publish_time", ""),
-                    "real_url": a["real_url"],
-                    "content": content,
-                }
-            )
-        return results
+        try:
+            results = []
+            for a in sogou_weixin_search(keyword, top_n):
+                content = ""
+                try:
+                    content = get_article_content(a["real_url"])
+                except Exception:  # noqa: BLE001 —— 正文抓取失败不影响其他文章
+                    pass
+                if not content:
+                    continue
+                results.append(
+                    {
+                        "title": a["title"],
+                        "publish_time": a.get("publish_time", ""),
+                        "real_url": a["real_url"],
+                        "content": content,
+                    }
+                )
+            if results:
+                return results
+        except Exception:  # noqa: BLE001 —— 搜狗不可用则降级
+            pass
+        # 兜底：Bing 网页搜索（标题 + 搜索摘要）
+        try:
+            return bing_search(keyword, top_n)
+        except Exception:  # noqa: BLE001
+            return []
 
     # 网络抓取为同步阻塞实现，放到线程池避免阻塞事件循环
     return await asyncio.to_thread(_run)

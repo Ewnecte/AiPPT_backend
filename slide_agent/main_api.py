@@ -46,9 +46,15 @@ async def generate(payload: dict):
     provider = PPT_WRITER_AGENT_CONFIG["provider"]
     model = payload.get("model", PPT_WRITER_AGENT_CONFIG["model"])
     use_kb = bool(payload.get("generateFromUploadedFile", False))
+    use_web = bool(payload.get("generateFromWebSearch", False))
     user_id = str(payload.get("userId", "1"))
     agent = WritingSystemAgent(
-        provider, model, use_kb=use_kb, user_id=user_id, use_chart=USE_CHART
+        provider,
+        model,
+        use_kb=use_kb,
+        use_web=use_web,
+        user_id=user_id,
+        use_chart=USE_CHART,
     )
 
     queue: asyncio.Queue = asyncio.Queue()
