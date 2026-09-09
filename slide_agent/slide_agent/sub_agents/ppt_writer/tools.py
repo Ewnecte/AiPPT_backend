@@ -75,41 +75,114 @@ async def inject_images(data: dict) -> dict:
 async def document_search(keyword: str, top_n: int = 3) -> list[dict]:
     """联网搜索，返回 [{title, publish_time, real_url, content}]。
 
-    优先搜狗微信（抓公众号正文）；搜狗通道不稳定（空结果 / 正文抓不到）时
-    自动降级为 Bing 网页搜索（title + 摘要，不抓正文）。
+    多通道并集，正文统一走 web_fetcher 清洗（去导航/广告，只留正文）：
+      1. 搜狗微信 —— 公众号文章，优先尝试抓全文；
+      2. Bing 通用网页 —— 补足非微信来源；正文抓取失败时退回搜索摘要；
+      3. GitHub 仓库 README —— 仅当前两通道颗粒无收、且查询明显指向代码/
+         开源库时兜底，直接取仓库一手资料（普通搜索对这种查询只出教程软文）。
+    各候选的正文抓取为并发执行，通道异常自动降级（宁缺毋滥），
+    不影响后续生成。
     """
     import asyncio
+    from concurrent.futures import ThreadPoolExecutor
 
-    from .weixin_search import bing_search, get_article_content, sogou_weixin_search
+    from .web_fetcher import fetch_text
+    from .weixin_search import bing_search, sogou_weixin_search
+
+    # 反爬/验证页特征：命中说明抓到的是拦截页而不是正文，应丢弃走下一通道
+    _BOT_PAGE_MARKERS = (
+        "antispider", "请输入验证码", "访问过于频繁", "环境异常", "安全验证",
+        "verify you are human", "unusual traffic", "人机验证",
+    )
+
+    def _looks_like_bot_page(url: str, content: str) -> bool:
+        if "antispider" in url.lower():
+            return True
+        low = content.lower()
+        return any(m in low for m in _BOT_PAGE_MARKERS)
+
+    def _grab_full(a: dict) -> dict | None:
+        """抓一篇候选正文；失败/抓到拦截页返回 None（外层决定降级）。"""
+        url = a.get("real_url", "")
+        if not url:
+            return None
+        try:
+            content = fetch_text(url).strip()
+        except Exception:  # noqa: BLE001 —— 网络/解析失败，交由外层降级
+            return None
+        if len(content) < 80 or _looks_like_bot_page(url, content):
+            return None
+        return {
+            "title": a.get("title", ""),
+            "publish_time": a.get("publish_time", ""),
+            "real_url": url,
+            "content": content,
+        }
+
+    def _fetch_batch(cands: list[dict]) -> list[dict]:
+        """并发抓取一批候选，返回按原顺序排好的 {cand: got|None} 对齐结果。"""
+        if not cands:
+            return []
+        with ThreadPoolExecutor(max_workers=len(cands)) as ex:
+            return list(ex.map(_grab_full, cands))
 
     def _run() -> list[dict]:
+        results: list[dict] = []
+
+        # 通道 1：搜狗微信（对微信生态命中更准）
+        wx: list[dict] = []
         try:
-            results = []
-            for a in sogou_weixin_search(keyword, top_n):
-                content = ""
-                try:
-                    content = get_article_content(a["real_url"])
-                except Exception:  # noqa: BLE001 —— 正文抓取失败不影响其他文章
-                    pass
-                if not content:
-                    continue
-                results.append(
-                    {
-                        "title": a["title"],
-                        "publish_time": a.get("publish_time", ""),
-                        "real_url": a["real_url"],
-                        "content": content,
-                    }
-                )
-            if results:
-                return results
-        except Exception:  # noqa: BLE001 —— 搜狗不可用则降级
+            wx = sogou_weixin_search(keyword, top_n)
+        except Exception:  # noqa: BLE001 —— 搜狗不可用则跳过
             pass
-        # 兜底：Bing 网页搜索（标题 + 搜索摘要）
-        try:
-            return bing_search(keyword, top_n)
-        except Exception:  # noqa: BLE001
-            return []
+        for got in _fetch_batch(wx):
+            if got:
+                results.append(got)
+
+        # 通道 2：Bing 通用网页，补足剩余名额
+        if len(results) < top_n:
+            bing: list[dict] = []
+            try:
+                bing = bing_search(keyword, top_n)
+            except Exception:  # noqa: BLE001 —— Bing 不可用则跳过
+                pass
+            for cand, got in zip(bing, _fetch_batch(bing)):
+                if got:
+                    results.append(got)
+                elif cand.get("content", "").strip():  # 抓不到正文退回摘要
+                    results.append(
+                        {
+                            "title": cand.get("title", ""),
+                            "publish_time": "",
+                            "real_url": cand.get("real_url", ""),
+                            "content": cand["content"],
+                        }
+                    )
+                if len(results) >= top_n:
+                    break
+
+        # 通道 3：GitHub 仓库 README —— 仅当常规搜索颗粒无收、且查询明显指向
+        # 代码/开源库时补充一手资料（无谓命中会白白消耗 GitHub API 配额）
+        if not results:
+            try:
+                from . import github_search
+            except Exception:  # noqa: BLE001 —— 模块缺失/依赖异常直接跳过
+                github_search = None
+            if github_search is not None and github_search.looks_like_repo_query(keyword):
+                try:
+                    for g in github_search.repo_search(keyword, top_n):
+                        results.append(
+                            {
+                                "title": g.get("title", ""),
+                                "publish_time": "",
+                                "real_url": g.get("real_url", ""),
+                                "content": g.get("content", ""),
+                            }
+                        )
+                except Exception:  # noqa: BLE001 —— GitHub 网络/API 失败静默降级
+                    pass
+
+        return results[:top_n]
 
     # 网络抓取为同步阻塞实现，放到线程池避免阻塞事件循环
     return await asyncio.to_thread(_run)
