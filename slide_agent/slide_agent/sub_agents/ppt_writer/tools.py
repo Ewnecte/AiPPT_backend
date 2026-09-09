@@ -78,8 +78,10 @@ async def document_search(keyword: str, top_n: int = 3) -> list[dict]:
     多通道并集，正文统一走 web_fetcher 清洗（去导航/广告，只留正文）：
       1. 搜狗微信 —— 公众号文章，优先尝试抓全文；
       2. Bing 通用网页 —— 补足非微信来源；正文抓取失败时退回搜索摘要；
-      3. GitHub 仓库 README —— 仅当前两通道颗粒无收、且查询明显指向代码/
-         开源库时兜底，直接取仓库一手资料（普通搜索对这种查询只出教程软文）。
+      3. GitHub 仓库 README —— 常规搜索颗粒无收、且查询明显指向代码/
+         开源库时兜底，取仓库一手资料；
+      4. 官网/文档站 —— 前三通道都空、且查询明显在找单一产品/框架的
+         官方资料时，猜官方域名抓 sitemap 文档（LangChain → langchain.com）。
     各候选的正文抓取为并发执行，通道异常自动降级（宁缺毋滥），
     不影响后续生成。
     """
@@ -180,6 +182,27 @@ async def document_search(keyword: str, top_n: int = 3) -> list[dict]:
                             }
                         )
                 except Exception:  # noqa: BLE001 —— GitHub 网络/API 失败静默降级
+                    pass
+
+        # 通道 4：官网/文档站 —— 前三通道颗粒无收、且查询明显在找单一产品/
+        # 框架官方资料时才猜官网抓 sitemap 文档（避免对泛主题乱猜域名）
+        if not results:
+            try:
+                from . import doc_site
+            except Exception:  # noqa: BLE001 —— 模块缺失/依赖异常直接跳过
+                doc_site = None
+            if doc_site is not None and doc_site.looks_like_doc_query(keyword):
+                try:
+                    for d in doc_site.doc_site_search(keyword, top_n):
+                        results.append(
+                            {
+                                "title": d.get("title", ""),
+                                "publish_time": "",
+                                "real_url": d.get("real_url", ""),
+                                "content": d.get("content", ""),
+                            }
+                        )
+                except Exception:  # noqa: BLE001 —— 文档站网络/抓取失败静默降级
                     pass
 
         return results[:top_n]
