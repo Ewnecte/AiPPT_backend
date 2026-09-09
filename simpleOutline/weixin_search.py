@@ -1,5 +1,6 @@
 """搜狗微信搜索：关键词 → 文章列表 → 真实 URL → 正文。
 
+与 simpleOutline/weixin_search.py 保持一致（复现计划 7.1 要求 slide_agent 亦具备微信搜索）。
 注意：搜狗页面结构与反爬策略可能变动，本实现为尽力而为（best-effort），
 失败时向上抛异常由调用方降级处理。
 """
@@ -81,3 +82,38 @@ def get_article_content(url: str) -> str:
     if not content:
         return ""
     return content.get_text("\n", strip=True)
+
+
+def bing_search(keyword: str, top_n: int = 3) -> list[dict]:
+    """Bing 网页搜索兜底：搜狗微信通道不稳定时使用。
+
+    返回 [{title, link, real_url, content}]，content 为搜索摘要（snippet），
+    无需抓取正文，比微信正文抓取更快更稳。
+    """
+    resp = httpx.get(
+        "https://www.bing.com/search",
+        params={"q": keyword, "setlang": "zh-hans"},
+        headers=HEADERS,
+        follow_redirects=True,
+        timeout=20,
+    )
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "lxml")
+
+    results: list[dict] = []
+    for li in soup.select("li.b_algo"):
+        a = li.select_one("h2 a")
+        if not a:
+            continue
+        title = a.get_text(strip=True)
+        url = a.get("href", "")
+        if not title or not url:
+            continue
+        snippet_el = li.select_one(".b_caption p") or li.select_one("p")
+        snippet = snippet_el.get_text(" ", strip=True) if snippet_el else ""
+        results.append(
+            {"title": title, "link": url, "real_url": url, "content": snippet}
+        )
+        if len(results) >= top_n:
+            break
+    return results
