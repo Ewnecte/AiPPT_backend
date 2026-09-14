@@ -237,6 +237,113 @@ async def proxy(url: str = ""):
     )
 
 
+# ============================================================================
+# 多 Agent PPT 生成（B + E）：工具白名单 + Schema 校验 + 熔断 + token 看板
+# ============================================================================
+import asyncio  # noqa: E402
+import json  # noqa: E402
+import sys  # noqa: E402
+
+_BACKEND_DIR = Path(__file__).resolve().parent.parent
+if str(_BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_DIR))
+
+try:  # 依赖缺失（如未装 litellm）时不影响网关其它接口
+    from multi_agent.llm import FakeLLM, LLMClient  # noqa: E402
+    from multi_agent.orchestrator import Limits, MultiAgentOrchestrator  # noqa: E402
+    from multi_agent.tool_registry import SANDBOX_DIR, WHITELIST, tool_catalog_text  # noqa: E402
+
+    AGENT_OK = True
+    AGENT_IMPORT_ERROR = ""
+except Exception as _e:  # noqa: BLE001
+    AGENT_OK = False
+    AGENT_IMPORT_ERROR = f"{type(_e).__name__}: {_e}"
+
+
+@app.get("/tools/agent_info")
+async def agent_info():
+    """多 Agent 能力说明：白名单工具 + Schema（供前端/演示展示）。"""
+    if not AGENT_OK:
+        return JSONResponse({"ok": False, "error": AGENT_IMPORT_ERROR}, status_code=503)
+    return {
+        "ok": True,
+        "tools": sorted(WHITELIST),
+        "catalog": tool_catalog_text(),
+        "sandbox_dir": str(SANDBOX_DIR),
+        "limits": Limits().as_dict(),
+    }
+
+
+@app.get("/tools/agent_files")
+async def agent_files(prefix: str = ""):
+    """列出沙箱内已落盘产物（演示时展示“写入文件”结果）。"""
+    if not AGENT_OK:
+        return JSONResponse({"ok": False, "error": AGENT_IMPORT_ERROR}, status_code=503)
+    base = SANDBOX_DIR
+    files = []
+    if base.exists():
+        for p in sorted(base.rglob("*")):
+            if p.is_file():
+                rel = str(p.relative_to(base)).replace("\\", "/")
+                if prefix and not rel.startswith(prefix.strip("/")):
+                    continue
+                files.append({"path": rel, "bytes": p.stat().st_size, "mtime": int(p.stat().st_mtime)})
+    return {"ok": True, "sandbox_dir": str(base), "files": files[-200:]}
+
+
+@app.post("/tools/agent_run")
+async def agent_run(payload: dict):
+    """SSE 流式运行多 Agent 任务：step / plan / loop_detected / breaker / artifact / done。
+
+    body: {task, mode: auto|real|fake, maxSteps?, maxTokens?, timeoutS?, sandboxPrefix?, script?}
+    """
+    if not AGENT_OK:
+        return JSONResponse({"ok": False, "error": AGENT_IMPORT_ERROR}, status_code=503)
+    task = str(payload.get("task") or "").strip()
+    if not task:
+        return JSONResponse({"error": "task 不能为空"}, status_code=400)
+
+    limits = Limits(
+        max_steps=int(payload.get("maxSteps") or 10),
+        max_tokens=int(payload.get("maxTokens") or 40000),
+        timeout_s=float(payload.get("timeoutS") or 180),
+    )
+    mode = str(payload.get("mode") or "auto")
+    script = payload.get("script") if isinstance(payload.get("script"), list) else None
+    sandbox_prefix = str(payload.get("sandboxPrefix") or "web")
+
+    queue: asyncio.Queue = asyncio.Queue()
+
+    async def on_event(ev: dict) -> None:
+        await queue.put(ev)
+
+    async def produce() -> None:
+        try:
+            llm = FakeLLM(script=script) if mode == "fake" else LLMClient()
+            orch = MultiAgentOrchestrator(
+                task, llm=llm, limits=limits, on_event=on_event, sandbox_prefix=sandbox_prefix
+            )
+            result = await orch.run()
+            await queue.put({"type": "result", "data": result.as_dict()})
+        except Exception as e:  # noqa: BLE001
+            await queue.put({"type": "error", "message": f"{type(e).__name__}: {e}"})
+        finally:
+            await queue.put(None)
+
+    task_obj = asyncio.create_task(produce())
+
+    async def gen():
+        while True:
+            item = await queue.get()
+            if item is None:
+                break
+            yield f"data: {json.dumps(item, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+        await task_obj
+
+    return StreamingResponse(gen(), media_type="text/event-stream")
+
+
 if __name__ == "__main__":
     import uvicorn
 
